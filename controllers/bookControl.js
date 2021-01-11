@@ -2,7 +2,46 @@ const cloudinary = require('../utils/cloudinary');
 const DB = require('../config/db.config');
 const { validationResult } = require('express-validator')
 
+const searchBook = (req, res) => {
+    let search = req.body.search;
+    let sql = `SELECT * FROM books WHERE books.title or books.author LIKE '%${search}%'`;
 
+    try {
+        console.log(search)
+        DB.query(sql, (err, result) => {
+            if (err) throw err;
+
+            if (result.length === 0) {
+                res.json({message: 'search input does not match any books'})
+            } else {
+                res.json({message: `results with ${search} keyword`, result: result})
+            }
+        })
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
+
+const singleBook = (req, res) => {
+    let sql = `SELECT * FROM books WHERE bookID = ${req.params.id}`
+    try {
+        DB.query(sql, (err, results) => {
+            if (err) throw err;
+            
+            if (results[0] == null) {
+                res.json({message: `Invalid Book ID`})
+            }
+            else if (results !== []) {
+                res.json({message: `Book with ID ${req.params.id}`, book: results})
+            }
+        })
+    } 
+    catch(err) {
+        console.log('error:', err)
+    }
+}
 
 
 const postBook = async (req, res) => {
@@ -49,6 +88,8 @@ const allBooks = async (req, res) => {
     }
 }
 module.exports = {
+    searchBook,
+    singleBook,
     postBook,
     allBooks
 };
