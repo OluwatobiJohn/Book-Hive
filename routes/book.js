@@ -5,7 +5,10 @@ const Books = require('../controllers/bookControl')
 const Validator = require('../middlewares/bookVal')
 
 //search book
-router.get('/search', Books.searchBook)
+router.get('/search', Books.searchBook);
+
+//delete book
+router.delete('/:id', Books.deleteBook);
 
 //add book
 router.post('/', upload.single('cover'), Validator.postBookVal, Books.postBook);

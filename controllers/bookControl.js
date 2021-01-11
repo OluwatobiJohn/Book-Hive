@@ -23,6 +23,26 @@ const searchBook = (req, res) => {
     }
 }
 
+const deleteBook = (req, res) => {
+    let sql = `DELETE FROM books WHERE bookID = ${req.params.id}`;
+
+    try {
+        DB.query(sql, (err, result) => {
+            if (err) throw err;
+
+            if (result.affectedRows < 1) {
+                res.json({message: 'Invalid ID, no book to delete'})
+            } else {
+                console.log(result);
+                res.json({message: `Book with ID ${req.params.id} deleted`})
+            }
+        })
+    }
+    catch(err) {
+        console.log(err)
+    }
+}
+
 
 const singleBook = (req, res) => {
     let sql = `SELECT * FROM books WHERE bookID = ${req.params.id}`
@@ -89,6 +109,7 @@ const allBooks = async (req, res) => {
 }
 module.exports = {
     searchBook,
+    deleteBook,
     singleBook,
     postBook,
     allBooks
